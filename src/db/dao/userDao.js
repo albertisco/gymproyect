@@ -1,8 +1,8 @@
-const Usuario = require('../dao/db/models/userModel')
+const Usuario = require('../../models/userModel')
 
-module.exports.encontrarUsuarioByNiforEmail = async (nif,email) => {
+module.exports.encontrarUsuarioByNiforEmail = (nif,email) => {
 
-    return new Promise((resolve,reject) => {      
+    return new Promise( async (resolve,reject) => {      
         try{
             //buscamos si el nif o el email ya existen en bbdd
             const coincidencia = await Usuario.findOne()
@@ -38,4 +38,57 @@ module.exports.encontrarUsuarioByNiforEmail = async (nif,email) => {
         }
     })
 
+}
+
+module.exports.encontrarUsuarioByNif = (nif) => {
+
+    return new Promise(async(resolve,reject) => {
+        try{
+            const usuario = await Usuario.findOne({nif})
+            if(!usuario){
+                reject({
+                    status:400,
+                    error:'Usuario no encontrado'
+                })
+                return;
+            }
+            resolve({
+                status:200,
+                usuario
+            })
+        } catch (error) {
+            reject({
+                status:500,
+                error:'Hubo un error, vuelva a intentarlo más tarde'
+            })
+        }
+        
+
+
+    })
+}
+
+module.exports.insertarUsuario = (usuario) => {
+
+    return new Promise( async (resolve,reject) => {
+        try {
+            const usuarioaux = new Usuario(usuario)
+            //guardamos al usuario
+            const usuarioinsertado = await usuarioaux.save()
+            //generamos el jwt, actualizamos el usuario en bbdd con el jwt generado
+            const jwt = await usuarioinsertado.generarJwt()
+            //devolvemos la respuesta con el jwt
+            resolve({
+                status:200,
+                usuarioinsertado,
+                jwt
+            })
+
+        } catch (error) {
+            reject({
+                status:500,
+                error:'Ocurrió un problema, vuelva a intentarlo más tarde'
+            })
+        }
+    })
 }

@@ -1,6 +1,8 @@
 const moongose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
+const util = require('../utils/util')
+const userDao = require('../db/dao/userDao')
 
 const userSchema = new moongose.Schema({
     nif:{
@@ -45,6 +47,10 @@ const userSchema = new moongose.Schema({
     alta:{
        type:Boolean,
        default:true 
+    },
+    jwt:{
+        type:String,
+        default:""
     }
 })
 
@@ -58,7 +64,18 @@ userSchema.pre('save', async function(next){
 
     next()
 })
+//funcion para generarJwt
+userSchema.method('generarJwt', async function () {
 
+        const user = this
+        //obtenemos el jwt
+        const jwt =  util.encriptar(user._id)
+        user.jwt = jwt
+        //guardamos el usuario, con el flag a false , para que no haga validaciones el modelo
+        await user.save(false)
+        //devolvemos el jwt
+        return jwt;
+})
 const usuario = moongose.model('usuario', userSchema)
 
 module.exports = usuario
