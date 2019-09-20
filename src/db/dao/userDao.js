@@ -1,6 +1,6 @@
 const Usuario = require('../../models/userModel')
 
-module.exports.encontrarUsuarioByNiforEmail = (nif,email) => {
+module.exports.validarUsuarioByNiforEmail = (nif,email) => {
 
     return new Promise( async (resolve,reject) => {      
         try{
@@ -67,6 +67,8 @@ module.exports.encontrarUsuarioByNif = (nif) => {
 
     })
 }
+
+
 
 module.exports.insertarUsuario = (usuario) => {
 

@@ -2,7 +2,7 @@ const moongose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
 const util = require('../utils/util')
-const userDao = require('../db/dao/userDao')
+
 
 const userSchema = new moongose.Schema({
     nif:{
@@ -68,6 +68,7 @@ userSchema.pre('save', async function(next){
 userSchema.method('generarJwt', async function () {
 
         const user = this
+        console.log(user)
         //obtenemos el jwt
         const jwt =  util.encriptar(user._id)
         user.jwt = jwt
