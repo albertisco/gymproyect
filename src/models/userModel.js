@@ -68,7 +68,6 @@ userSchema.pre('save', async function(next){
 userSchema.method('generarJwt', async function () {
 
         const user = this
-        console.log(user)
         //obtenemos el jwt
         const jwt =  util.encriptar(user._id)
         user.jwt = jwt

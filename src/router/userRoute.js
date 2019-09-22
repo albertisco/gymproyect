@@ -1,7 +1,7 @@
 const express = require('express')
 const usuarioDao = require('../db/dao/userDao')
-const Usuario = require('../models/userModel')
 const util = require('../utils/util')
+const userMiddleware = require('../midleware/userMidleware')
 
 
 const router = express.Router()
@@ -62,5 +62,9 @@ router.post('/usuarios/login', async (req,resp) => {
     }
 })
 
+
+router.get('/usuarios/me', userMiddleware.comprobarCaducidadToken ,(req,resp) => {
+    resp.send('ver perfil')
+})
 module.exports = router
 
