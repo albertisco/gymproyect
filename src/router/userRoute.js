@@ -63,8 +63,16 @@ router.post('/usuarios/login', async (req,resp) => {
 })
 
 
-router.get('/usuarios/me', userMiddleware.comprobarCaducidadToken ,(req,resp) => {
-    resp.send('ver perfil')
+router.get('/usuarios/me', userMiddleware.comprobarCaducidadToken , async (req,resp) => {
+
+    const idUsuario = req.caducidad.id
+    console.log(idUsuario)
+    try {
+        const response = await usuarioDao.buscarUsuarioPorId(idUsuario)
+        resp.send(response)
+    } catch(error) {
+        resp.send(error)
+    } 
 })
 module.exports = router
 

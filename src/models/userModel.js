@@ -76,6 +76,17 @@ userSchema.method('generarJwt', async function () {
         //devolvemos el jwt
         return jwt;
 })
+
+userSchema.method('toJSON', function() {
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.jwt
+
+    return userObject
+
+})
 const usuario = moongose.model('usuario', userSchema)
 
 module.exports = usuario

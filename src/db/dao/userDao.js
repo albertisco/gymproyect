@@ -69,7 +69,6 @@ module.exports.encontrarUsuarioByNif = (nif) => {
 }
 
 
-
 module.exports.insertarUsuario = (usuario) => {
 
     return new Promise( async (resolve,reject) => {
@@ -90,6 +89,31 @@ module.exports.insertarUsuario = (usuario) => {
             reject({
                 status:500,
                 error:'Ocurrió un problema, vuelva a intentarlo más tarde'
+            })
+        }
+    })
+}
+
+module.exports.buscarUsuarioPorId = (id) => {
+    return new Promise(async(resolve,reject) => {              
+        try{
+            const user = await Usuario.findById(id)
+            console.log(user)
+            if(!user){
+                reject({
+                    status:400,
+                    error:'Usuario, no existe'
+                })
+                return
+            }
+            resolve({
+                status:200,
+                user
+            })
+        } catch (error) {
+            reject({
+                status:500,
+                error:'Hubo un error, vuelva a intentarlo más tarde'
             })
         }
     })
