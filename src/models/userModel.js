@@ -83,6 +83,8 @@ userSchema.method('toJSON', function() {
 
     delete userObject.password
     delete userObject.jwt
+    delete userObject.alta
+    delete userObject.sancionado
 
     return userObject
 
