@@ -72,7 +72,7 @@ userSchema.method('generarJwt', async function () {
         const jwt =  util.encriptar(user._id)
         user.jwt = jwt
         //guardamos el usuario, con el flag a false , para que no haga validaciones el modelo
-        await user.save(false)
+        await user.updateOne({jwt})
         //devolvemos el jwt
         return jwt;
 })

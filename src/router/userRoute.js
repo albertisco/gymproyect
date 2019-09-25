@@ -1,7 +1,8 @@
 const express = require('express')
 const usuarioDao = require('../db/dao/userDao')
 const util = require('../utils/util')
-const userMiddleware = require('../midleware/userMidleware')
+const {comprobarCaducidadToken} = require('../midleware/userMidleware')
+
 
 
 const router = express.Router()
@@ -30,16 +31,18 @@ router.post('/usuarios', async(req,resp) => {
 
 router.post('/usuarios/login', async (req,resp) => {
     //obtenemos las credenciales que viajen en el body de la request, en el objeto credenciales
-    const credenciales = req.body.credenciales 
+    const {nif,pass} = req.body.credenciales 
     try {
         //comprobamos si el usuario existe
-        const response = await usuarioDao.encontrarUsuarioByNif(credenciales.nif)
+        const {status,usuario} = await usuarioDao.encontrarUsuarioByNif(nif)
+        console.log(usuario)
 
         //comprobamos si la password que tenemso almacenada en bd es la misma que nos envian
-        const coincide = await util.comprobarPassword(credenciales.pass, response.usuario.password)
+        const coincide = await util.comprobarPassword(pass, usuario.password)
+        console.log(coincide)
 
-        //si el usuario no existe o si la password no coincide enviamos un error
-        if(!response.usuario || !coincide){
+        //ssi la password no coincide enviamos un error
+       if(!coincide){
             resp.send({
                 status:400,
                 Error:'Credenciales incorrectas, recuerde que a los tres intentos su usuario quedará bloqueado'
@@ -47,14 +50,16 @@ router.post('/usuarios/login', async (req,resp) => {
             return
         }
         //obtenemos el jwt y lo metemos en la response para el usuario
-         const jwt = await response.usuario.generarJwt()
-         response.jwt = jwt
+         const jwt = await usuario.generarJwt()
          resp.send({
-             response
+             status,
+             usuario,
+             jwt
          })
         
     } catch(error) {
         // si se produce cualquier error no contemplado devolvemos un error 500
+        console.log(error)
         resp.send({
             status:500,
             Error:'Vuelva a intentarlo más tarde, en caso de que el error persista contacto con nosotros'
@@ -62,17 +67,80 @@ router.post('/usuarios/login', async (req,resp) => {
     }
 })
 
+//Ver perfil usuario - GET
 
-router.get('/usuarios/me', userMiddleware.comprobarCaducidadToken , async (req,resp) => {
-
+router.get('/usuarios/me', comprobarCaducidadToken , async (req,resp) => {
+    //en primer lugar ejecutamos el middleware que nos permite saber si el token del usuario está caducado
+    //obtenemos de la request el idUsuario
     const idUsuario = req.caducidad.id
-    console.log(idUsuario)
     try {
+        //ejecutamos el método buscarUsuarioPorId que nos devuelve el usuario en función del Id
         const response = await usuarioDao.buscarUsuarioPorId(idUsuario)
+        //devolvemos la respuesta
         resp.send(response)
     } catch(error) {
+        //si se produce algún error se lanza un mensaje
         resp.send(error)
     } 
+})
+
+router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,resp) => {
+
+    try {
+        console.log(1)
+        const idUsuario = req.caducidad.id
+        const {nuevapassword, passwordantigua} = req.body
+
+        //buscamos y obtenemos el usuario por Id
+        const {user} = await usuarioDao.buscarUsuarioPorId(idUsuario)
+        if(!user){
+            resp.send({
+                status:400,
+                error:'Usuario no existe'
+            })
+            return
+        }
+        console.log(2)
+        //comprobamos si la password del usuario en bbdd coincide con la introducida
+        const coincide = await util.comprobarPassword(passwordantigua,user.password)
+        console.log(coincide)
+        console.log(2.1)
+        if(!coincide){
+            console.log(3)
+            resp.send({
+                status:400,
+                error:'password antigua incorrecta, vuelva a intentarlo'
+            })
+            return;
+        }
+        console.log(4)
+        //encriptamos la pw
+        const nuevapasswordencriptada = await util.encriptar(nuevapassword)
+        console.log(nuevapasswordencriptada)
+        console.log(5)
+        //seteamos la nuevapassword al usuario obtenido de la bbdd
+        const {status,usuarioActualizado, error} = await usuarioDao.actualizarPassword(nuevapasswordencriptada,idUsuario) 
+        console.log(6)
+        if(error){
+            resp.send({
+                status,
+                error
+            })
+            return
+        }
+        console.log(7)
+        resp.send({
+            status,
+            usuarioActualizado
+        })
+
+    
+    } catch (error) {
+        resp.send({
+            status:500,
+            error
+        })
+    }
 })
 module.exports = router
 

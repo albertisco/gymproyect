@@ -62,9 +62,6 @@ module.exports.encontrarUsuarioByNif = (nif) => {
                 error:'Hubo un error, vuelva a intentarlo más tarde'
             })
         }
-        
-
-
     })
 }
 
@@ -94,26 +91,57 @@ module.exports.insertarUsuario = (usuario) => {
     })
 }
 
+//metodo que nos permite buscarUsuarioPorId - se le pasa como parametro el id del usuario - devuelve una promesa
 module.exports.buscarUsuarioPorId = (id) => {
     return new Promise(async(resolve,reject) => {              
         try{
+            //obtenemos el usuario mediante la id facilitada
             const user = await Usuario.findById(id)
-            console.log(user)
+            //comprobamos que el usuario exista
             if(!user){
+                //sino existe enviamos la response
                 reject({
                     status:400,
                     error:'Usuario, no existe'
                 })
                 return
             }
+            //si llega hasta aqui es por que el usuario existe, devolvemos la response
             resolve({
                 status:200,
                 user
             })
         } catch (error) {
+            //si se produce un error no controlado, enviamos error
             reject({
                 status:500,
                 error:'Hubo un error, vuelva a intentarlo más tarde'
+            })
+        }
+    })
+}
+
+module.exports.actualizarPassword = (nuevapassword, id) => {
+    return new Promise( async (resolve,reject) => {
+        try {
+            const usuarioActualizado = await Usuario.updateOne({_id:id,password:nuevapassword})
+
+            if(!usuarioActualizado){
+                reject({
+                    status:400,
+                    error:'Error al actualizar el usuario'
+                })
+                return;
+            }
+
+            resolve({
+                status:200,
+                usuarioActualizado
+            })
+        } catch (error) {
+            reject({
+                status:500,
+                error:'Error, vuelva a intentarlo más tarde'
             })
         }
     })
