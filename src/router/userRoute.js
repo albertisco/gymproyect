@@ -38,7 +38,6 @@ router.post('/usuarios/login', async (req,resp) => {
 
         //comprobamos si la password que tenemso almacenada en bd es la misma que nos envian
         const coincide = await util.comprobarPassword(pass, usuario.password)
-        console.log(coincide)
 
         //ssi la password no coincide enviamos un error
        if(!coincide){
@@ -58,7 +57,6 @@ router.post('/usuarios/login', async (req,resp) => {
         
     } catch(error) {
         // si se produce cualquier error no contemplado devolvemos un error 500
-        console.log(error)
         resp.send({
             status:500,
             Error:'Vuelva a intentarlo más tarde, en caso de que el error persista contacto con nosotros'
@@ -104,7 +102,6 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
         const coincide = await util.comprobarPassword(passwordantigua,user.password)
 
         if(!coincide){
-            console.log(3)
             resp.send({
                 status:400,
                 error:'password antigua incorrecta, vuelva a intentarlo'

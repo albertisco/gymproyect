@@ -40,9 +40,9 @@ const userSchema = new moongose.Schema({
         type:String,
         required:true
     },
-    sancionado:{
-        type:Boolean,
-        default:false
+    faltas:{
+        type:Number,
+        default:0
     },
     alta:{
        type:Boolean,
