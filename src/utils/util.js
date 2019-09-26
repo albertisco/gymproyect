@@ -7,8 +7,6 @@ module.exports.encriptar = (id) => {
 }
 
 module.exports.comprobarPassword = async(pwinsertada,pwdb) => {
-    console.log(pwinsertada)
-    console.log(pwdb)
     const existe = await bcrypt.compare(pwinsertada,pwdb)
     return existe
 }

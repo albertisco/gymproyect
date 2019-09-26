@@ -35,7 +35,6 @@ router.post('/usuarios/login', async (req,resp) => {
     try {
         //comprobamos si el usuario existe
         const {status,usuario} = await usuarioDao.encontrarUsuarioByNif(nif)
-        console.log(usuario)
 
         //comprobamos si la password que tenemso almacenada en bd es la misma que nos envian
         const coincide = await util.comprobarPassword(pass, usuario.password)
@@ -87,7 +86,7 @@ router.get('/usuarios/me', comprobarCaducidadToken , async (req,resp) => {
 router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,resp) => {
 
     try {
-        console.log(1)
+
         const idUsuario = req.caducidad.id
         const {nuevapassword, passwordantigua} = req.body
 
@@ -100,11 +99,10 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
             })
             return
         }
-        console.log(2)
+
         //comprobamos si la password del usuario en bbdd coincide con la introducida
         const coincide = await util.comprobarPassword(passwordantigua,user.password)
-        console.log(coincide)
-        console.log(2.1)
+
         if(!coincide){
             console.log(3)
             resp.send({
@@ -113,14 +111,13 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
             })
             return;
         }
-        console.log(4)
+
         //encriptamos la pw
-        const nuevapasswordencriptada = await util.encriptar(nuevapassword)
-        console.log(nuevapasswordencriptada)
-        console.log(5)
+        const nuevapasswordencriptada = await util.encriptarPassword(nuevapassword)
+
         //seteamos la nuevapassword al usuario obtenido de la bbdd
         const {status,usuarioActualizado, error} = await usuarioDao.actualizarPassword(nuevapasswordencriptada,idUsuario) 
-        console.log(6)
+        //si existe el error devolvemos el error con su status correspondiente
         if(error){
             resp.send({
                 status,
@@ -128,7 +125,7 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
             })
             return
         }
-        console.log(7)
+
         resp.send({
             status,
             usuarioActualizado
