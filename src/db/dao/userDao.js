@@ -1,10 +1,12 @@
 const Usuario = require('../../models/userModel')
 
+
 module.exports.validarUsuarioByNiforEmail = (nif,email) => {
 
     return new Promise( async (resolve,reject) => {      
         try{
             //buscamos si el nif o el email ya existen en bbdd
+
             const coincidencia = await Usuario.findOne()
                                         .or([{nif},{email}])
                                         .exec()

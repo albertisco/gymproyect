@@ -81,6 +81,8 @@ router.get('/usuarios/me', comprobarCaducidadToken , async (req,resp) => {
     } 
 })
 
+//Resetear pw  - POST
+
 router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,resp) => {
 
     try {
@@ -99,8 +101,9 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
         }
 
         //comprobamos si la password del usuario en bbdd coincide con la introducida
+        console.log(nuevapassword,passwordantigua)
         const coincide = await util.comprobarPassword(passwordantigua,user.password)
-
+        console.log(coincide)
         if(!coincide){
             resp.send({
                 status:400,
