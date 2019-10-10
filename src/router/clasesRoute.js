@@ -1,9 +1,8 @@
 const express = require('express')
-const semana = require('../models/semanaModel')
-
+const claseDao = require('../db/dao/clasesDao')
 const router = express.Router()
 
-router.post('/clases', (req,resp) => {
+router.post('/clases', async (req,resp) => {
 
     const semana = {
         'lunes': [
@@ -60,6 +59,13 @@ router.post('/clases', (req,resp) => {
                 sala:'ciclo indoor'
             }
         ]
+    }
+
+    try {
+        const semana = await claseDao.guardarSemana(semana)
+        resp.send(semana)
+    } catch (error) {
+        resp.send(error)
     }
 
 })

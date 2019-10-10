@@ -8,9 +8,11 @@ require('./src/db/startConnection')
 const app = express()
 
 const userRoute =  require('./src/router/userRoute')
+const clasesRoute = require('./src/router/userRoute')
 
 app.use(express.json())
 app.use(userRoute)
+app.use(clasesRoute)
 
 //levantamos la aplicacion en el puerto 3000
 app.listen(3000,() => {
