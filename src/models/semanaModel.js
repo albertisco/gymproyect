@@ -10,7 +10,8 @@ const semanaSchema = mongoose.Schema({
     },
     semana:{
         type:Map,
-        of:[{type:ObjectId,ref:'clase'}]
+        of:[{type:ObjectId,ref:'clase'}],
+        ref:'semana'
     }
 })
 

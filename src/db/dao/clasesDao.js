@@ -22,12 +22,17 @@ module.exports.guardarSemana = (semana) => {
     
 }
 
-module.exports.obtenerSemana = (semama, year) => {
+module.exports.obtenerSemana = (numeroSemana , year) => {
 
     return new Promise( async (resolve,reject) => {
         try{
 
-            const auxSemana = await Semana.findOne({semama , year})
+            const auxSemana = await Semana.findOne({numeroSemana , year}).populate({
+                path:'semana',
+                select:'lunes',
+                model:'semana'
+
+            })
             if(!auxSemana){
                 reject({
                     status:400,

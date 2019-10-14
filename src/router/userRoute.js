@@ -1,7 +1,9 @@
 const express = require('express')
 const usuarioDao = require('../db/dao/userDao')
+const claseDao = require('../db/dao/clasesDao')
 const util = require('../utils/util')
 const {comprobarCaducidadToken} = require('../midleware/userMidleware')
+const moment = require('moment')
 
 
 
@@ -142,8 +144,17 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
 
 //******** RESERVAR CLASES *********//
 
-router.post('/usuarios/reservar', comprobarCaducidadToken, (req,resp) => {
-    console.log(req.caducidad)
+router.post('/usuarios/reservar', comprobarCaducidadToken, async (req,resp) => {
+
+
+    try{
+        console.log(1)
+        const respuesta = await claseDao.obtenerSemana(42,2019)
+        console.log(2)
+        resp.send(respuesta)
+    } catch (error) {
+        resp.send(error)
+    }
 })
 
 
