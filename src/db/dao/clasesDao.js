@@ -21,3 +21,33 @@ module.exports.guardarSemana = (semana) => {
     })
     
 }
+
+module.exports.obtenerSemana = (semama, year) => {
+
+    return new Promise( async (resolve,reject) => {
+        try{
+
+            const auxSemana = await Semana.findOne({semama , year})
+            if(!auxSemana){
+                reject({
+                    status:400,
+                    error:'No existen los horarios para esa semana'
+                })
+                return
+            }
+            resolve({
+                status:200,
+                auxSemana
+            })
+
+        } catch(error) {
+            reject({
+                status:500,
+                error:'Hubo un error, vuelva a intentarlo más tarde'
+            })
+        }
+       
+
+
+    })
+}
