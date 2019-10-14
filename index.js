@@ -8,7 +8,7 @@ require('./src/db/startConnection')
 const app = express()
 
 const userRoute =  require('./src/router/userRoute')
-const clasesRoute = require('./src/router/userRoute')
+const clasesRoute = require('./src/router/clasesRoute')
 
 app.use(express.json())
 app.use(userRoute)
