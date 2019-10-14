@@ -139,5 +139,13 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
         })
     }
 })
+
+//******** RESERVAR CLASES *********//
+
+router.post('/usuarios/reservar', comprobarCaducidadToken, (req,resp) => {
+    console.log(req.caducidad)
+})
+
+
 module.exports = router
 
