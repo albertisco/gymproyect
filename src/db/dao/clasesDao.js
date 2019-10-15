@@ -1,5 +1,27 @@
 const mongoose = require('mongoose')
 const Semana = require('../../models/semanaModel').semana
+const Clase = require('../../models/claseModel').clase
+
+module.exports.guardarClase = (clase) => {
+    return new Promise(async(resolve, reject) => {
+
+        try {
+            console.log('antes')
+            const auxClase = new Clase(clase)
+            console.log('despues',auxClase)
+            const claseGuardada = auxClase.save()
+            if(!claseGuardada){
+                reject(false)
+                return
+            }
+
+            resolve(true)
+        } catch(error) {
+            reject(false)
+        }
+
+    })
+}
 
 //metodo para guardar una semana de clases
 module.exports.guardarSemana = (semana) => {
@@ -27,12 +49,13 @@ module.exports.obtenerSemana = (numeroSemana , year) => {
     return new Promise( async (resolve,reject) => {
         try{
 
-            const auxSemana = await Semana.findOne({numeroSemana , year}).populate({
-                path:'semana',
-                select:'lunes',
-                model:'semana'
-
-            })
+            const auxSemana = await Semana.findOne({numeroSemana , year})
+            .populate('semana.lunes')
+            .populate('semana.martes')
+            .populate('semana.miercoles')
+            .populate('semana.jueves')
+            .populate('semana.viernes')
+            .populate('semana.sabado')
             if(!auxSemana){
                 reject({
                     status:400,

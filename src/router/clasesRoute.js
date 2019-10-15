@@ -1,5 +1,5 @@
 const express = require('express')
-const claseDao = require('../db/dao/clasesDao')
+const {guardarSemana, guardarClase} = require('../db/dao/clasesDao')
 const Clase = require('../models/claseModel').clase
 const moment = require('moment')
 
@@ -16,21 +16,30 @@ router.post('/clases', async (req,resp) => {
         sala:'ciclo indoor'
     }
     const clase =  new Clase(auxclase)
+
+    const resultado = await guardarClase(clase)
+    if(!resultado){
+        resp.send({
+            status:500,
+            error:'No se pudo guardar la clase'
+        })
+        return;
+    }
     const semana = {
         year:moment().year(),
         numeroSemana: moment().week(),
         semana :{
-            lunes: [clase],
-            martes: [clase],
-            miercoles:[clase],
-            jueves:[clase],
-            viernes:[clase],
-            sabado:[clase]
+            lunes: [clase,clase],
+            martes: [clase,clase],
+            miercoles:[clase,clase],
+            jueves:[clase,clase],
+            viernes:[clase,clase],
+            sabado:[clase,clase]
         }
     }
 
     try {
-        const auxsemana = await claseDao.guardarSemana(semana)
+        const auxsemana = await guardarSemana(semana)
         resp.send(auxsemana)
     } catch (error) {
         resp.send(error)
