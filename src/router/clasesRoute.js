@@ -1,7 +1,8 @@
 const express = require('express')
-const {guardarSemana, guardarClase} = require('../db/dao/clasesDao')
+const {guardarSemana, guardarClase, obtenerSemana} = require('../db/dao/clasesDao')
 const Clase = require('../models/claseModel').clase
 const moment = require('moment')
+const  {comprobarCaducidadToken} = require('../midleware/userMidleware')
 
 
 const router = express.Router()
@@ -45,5 +46,17 @@ router.post('/clases', async (req,resp) => {
         resp.send(error)
     }
 
+})
+
+router.get('/clases', comprobarCaducidadToken , async (req,resp) => {
+
+    try {
+
+        const respuestaSemana = await obtenerSemana(42,2019)
+
+        resp.send(respuestaSemana)
+    } catch(error) {
+        resp.send(error)
+    }
 })
 module.exports = router
