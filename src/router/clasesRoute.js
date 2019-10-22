@@ -53,7 +53,6 @@ router.get('/clases', comprobarCaducidadToken , async (req,resp) => {
     try {
 
         const respuestaSemana = await obtenerSemana(42,2019)
-
         resp.send(respuestaSemana)
     } catch(error) {
         resp.send(error)

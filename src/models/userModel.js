@@ -48,6 +48,10 @@ const userSchema = new moongose.Schema({
        type:Boolean,
        default:true 
     },
+    clases: [{
+        type:moongose.Schema.Types.ObjectId,
+        ref:'clase'
+    }],
     jwt:{
         type:String,
         default:""
@@ -88,6 +92,15 @@ userSchema.method('toJSON', function() {
 
     return userObject
 
+}, 
+{
+    virtuals:true
+})
+
+userSchema.virtual('historico',{
+    ref:'clase',
+    localField:'clases',
+    foreignField:'_id'
 })
 const usuario = moongose.model('usuario', userSchema)
 
