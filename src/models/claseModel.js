@@ -17,6 +17,10 @@ const claseSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
+    fecha:{
+        type: Date,
+        required:true
+    },
     hora:{
         type:String,
         required:true
@@ -24,7 +28,12 @@ const claseSchema = new mongoose.Schema({
     sala:{
         type:String,
         required:true
-    }
+    },
+    alumnos:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'usuario'
+    }]
 })
+
 
 module.exports.clase = mongoose.model('clase',claseSchema)

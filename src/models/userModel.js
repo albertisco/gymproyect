@@ -48,14 +48,21 @@ const userSchema = new moongose.Schema({
        type:Boolean,
        default:true 
     },
-    clases: [{
-        type:moongose.Schema.Types.ObjectId,
-        ref:'clase'
-    }],
+    bloqueado:{
+        type:Boolean,
+        default:false
+    },
     jwt:{
         type:String,
         default:""
-    }
+    },
+    clasesReservadas:[
+        {
+            type:moongose.Schema.Types.ObjectId,
+            ref:'clase'
+        }
+    ]
+        
 })
 
 userSchema.pre('save', async function(next){
@@ -97,11 +104,6 @@ userSchema.method('toJSON', function() {
     virtuals:true
 })
 
-userSchema.virtual('historico',{
-    ref:'clase',
-    localField:'clases',
-    foreignField:'_id'
-})
 const usuario = moongose.model('usuario', userSchema)
 
 module.exports = usuario

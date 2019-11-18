@@ -9,14 +9,19 @@ const router = express.Router()
 
 router.post('/clases', async (req,resp) => {
 
+    const fecha = new Date()
+    fecha.setTime(fecha.getTime() + Math.abs(new Date().getTimezoneOffset()*60*1000))
     const auxclase = {
         titulo:'Spinnig',
+        fecha,
         duracion: '1 h',
         maxAlumnos:20,
         hora:'13:00',
         sala:'ciclo indoor'
     }
     const clase =  new Clase(auxclase)
+
+    console.log(clase)
 
     const resultado = await guardarClase(clase)
     if(!resultado){
@@ -52,7 +57,7 @@ router.get('/clases', comprobarCaducidadToken , async (req,resp) => {
 
     try {
 
-        const respuestaSemana = await obtenerSemana(42,2019)
+        const respuestaSemana = await obtenerSemana(moment().week(),2019)
         resp.send(respuestaSemana)
     } catch(error) {
         resp.send(error)
