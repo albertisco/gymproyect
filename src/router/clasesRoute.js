@@ -56,7 +56,6 @@ router.post('/clases', async (req,resp) => {
 router.get('/clases', comprobarCaducidadToken , async (req,resp) => {
 
     try {
-
         const respuestaSemana = await obtenerSemana(moment().week(),2019)
         resp.send(respuestaSemana)
     } catch(error) {

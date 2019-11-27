@@ -61,7 +61,11 @@ const userSchema = new moongose.Schema({
             type:moongose.Schema.Types.ObjectId,
             ref:'clase'
         }
-    ]
+    ],
+    tipoUsuario: {
+        type: String,
+        default:"N"
+    }
         
 })
 

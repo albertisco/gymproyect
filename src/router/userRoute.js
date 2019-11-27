@@ -3,7 +3,7 @@ const usuarioDao = require('../db/dao/userDao')
 const claseDao = require('../db/dao/clasesDao')
 const util = require('../utils/util')
 const { encontrarUsuarioReserva } = require('../utils/usuarioUtils')
-const {comprobarCaducidadToken} = require('../midleware/userMidleware')
+const {comprobarCaducidadToken } = require('../midleware/userMidleware')
 const moment = require('moment')
 
 
@@ -38,10 +38,11 @@ router.post('/usuarios/login', async (req,resp) => {
     try {
         //comprobamos si el usuario existe
         const {status,usuario} = await usuarioDao.encontrarUsuarioByNif(nif)
+        console.log(usuario)
 
         //comprobamos si la password que tenemso almacenada en bd es la misma que nos envian
         const coincide = await util.comprobarPassword(pass, usuario.password)
-
+        console.log('coincide',coincide)
         //ssi la password no coincide enviamos un error
        if(!coincide){
             resp.send({
@@ -52,10 +53,24 @@ router.post('/usuarios/login', async (req,resp) => {
         }
         //obtenemos el jwt y lo metemos en la response para el usuario
          const jwt = await usuario.generarJwt()
+         console.log('jwt', jwt);
+         let inicio = "";
+         //obtenemos el menú del usuario
+         console.log('antes de obtener menu', usuario.tipoUsuario)
+         const menu = await usuarioDao.obtenerMenuUsuario(usuario.tipoUsuario)
+         console.log('despues de obtener menu usuario')
+         console.log('menu',menu);
+         if(usuario.tipoUsuario === "N"){
+            inicio = "inicio"
+         } else {
+            inicio = "admin"
+         }
+
          resp.send({
              status,
-             usuario,
-             jwt
+             jwt,
+             inicio,
+             menu
          })
         
     } catch(error) {
@@ -145,7 +160,7 @@ router.post('/usuarios/me/resetpassword', comprobarCaducidadToken, async (req,re
 
 //******** RESERVAR CLASES *********//
 
-router.post('/usuarios/reservar/:idclase', comprobarCaducidadToken, async (req,resp) => {
+router.post('/usuarios/reservar/:idclase',  comprobarCaducidadToken, async (req,resp) => {
 
         const clase = req.params.idclase
         const idUsuario = req.caducidad.id

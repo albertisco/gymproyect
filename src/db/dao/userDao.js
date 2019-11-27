@@ -1,4 +1,5 @@
 const Usuario = require('../../models/userModel')
+const Menu = require('../../models/menuModel')
 
 
 module.exports.validarUsuarioByNiforEmail = (nif,email) => {
@@ -194,5 +195,25 @@ module.exports.obtenerHistoricoClasesbyId = (idUsuario) => {
                 error:'Hubo un error, vuelva a intentarlo más tarde'
             })
         }
+    })
+}
+
+module.exports.obtenerMenuUsuario = (tipoUsuario) => {
+
+    return new Promise(async (resolve,reject) => {
+        try{
+            console.log('tipoUsuario',tipoUsuario);
+            const {usuario , menu} = await Menu.findOne({usuario:tipoUsuario})
+            console.log('usuario menu', usuario);
+            console.log('menu', menu);
+            resolve(menu);
+        } catch (e) {
+            console.log(e)
+            reject({
+                status:500,
+                error:'Error, vuelva a intentarlo más tarde'
+            })
+        }
+        
     })
 }
